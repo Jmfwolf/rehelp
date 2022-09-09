@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export SERVICE=""
+export ENVIRONMENT=""
 export CONFIG_PATH=""
 export PATHS=()
 export REPLACE=""

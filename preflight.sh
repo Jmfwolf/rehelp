@@ -6,7 +6,6 @@ case ${1,,} in
     p) check_paths      ;;
     s) check_service    ;;
     t) check_transform  ;;
-
 esac
 
 
@@ -74,6 +73,11 @@ check_transform(){
         echo "Someone didn't listen to warnings. You should pull this repo again.\nDon't alter the transform value if you aren't sure what you are doing"
         exit 1
     fi
+}
+
+check_env(){
+    ENV=($(yq '.environments' ../yml/definitions.yml))
+    if [[ ${#ENV[@]} ]];
 }
 
 check_full(){

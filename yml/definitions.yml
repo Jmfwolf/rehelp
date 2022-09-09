@@ -1,1 +1,33 @@
 # This will be where the specific files for each service are mapped out.
+# THIS IS AN EXAMPLE
+
+---
+environments:
+  - test
+  - production
+
+services:
+  - service: Oauth
+    environments:
+      - test:
+        - config/path/to/test/oauth.yml
+        - config/path/to/test/oauth2.yml
+        - config/path/to/test/oauth3.yml
+        - config/path/to/test/oauth4.yml
+      - production:
+        - config/path/to/prod/oauth.yml
+        - config/path/to/prod/oauth2.yml
+        - config/path/to/prod/oauth3.yml
+        - config/path/to/prod/oauth4.yml
+  - service: Admin
+    environment:
+      - test:
+        - config/path/to/test/admin.yml
+        - config/path/to/test/admin2.yml
+        - config/path/to/test/admin3.yml
+        - config/path/to/test/admin4.yml
+      - production:
+        - config/path/to/prod/admin.yml
+        - config/path/to/prod/admin2.yml
+        - config/path/to/prod/admin3.yml
+        - config/path/to/prod/admin4.yml
