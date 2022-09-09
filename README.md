@@ -17,9 +17,9 @@ software requirements:
 - gnu parallel https://www.gnu.org/software/parallel/
 
 ## Quick Start
-`rehelp set service SERVICENAME`
-`rehelp set paths   PATHS`
-`rehelp set replace REPLACEVALUE`
+1. `rehelp set service SERVICENAME`
+2. `rehelp set paths   PATHS`
+3. `rehelp set replace REPLACEVALUE`
 
 ## definitions.yml
 This file maps the service name to the specific config files that are a part of each service.
