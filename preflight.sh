@@ -1,9 +1,17 @@
 #!/bin/bash
 
+
+
 check_init(){
     INIT= $(`yq '.initialized' ../yml/config.yml`)
     if [[ INIT != true ]]; then
     check_service && check_transform
+    if [[ -z "$(which yq)" ]]; then
+        echo "Please use your package manager to install yq\ne.g. brew install yq"
+    fi
+    if [[ -z "$(which parallel)" ]]; then
+        echo "Please use your package manager to install yq\ne.g. brew install parallel"
+    fi
 }
 
 check_service(){
@@ -58,4 +66,9 @@ check_transform(){
         echo "Someone didn't listen to warnings. You should pull this repo again.\nDon't alter the transform value if you aren't sure what you are doing"
         exit 1
     fi
+}
+
+full_check(){
+    check_init && check_service && check_replace && check_paths
+    check_transform
 }

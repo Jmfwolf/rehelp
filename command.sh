@@ -1,8 +1,5 @@
 #!/bin/bash
 
-if [[ "$1"]]
-
-
 transform() {
     parallel ::: $TRANSFORM ::: ${PATHS[@]}
 }
