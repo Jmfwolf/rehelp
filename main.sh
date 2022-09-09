@@ -7,10 +7,9 @@ export REPLACE=""
 export TRANSFORM=""
 
 case ${1,,} in
-    set) ./command.sh $@    ;;
-    get) ./command.sh $@    ;;
-    clone)                  ;;
-    pull)                   ;;
-    transform)  ./preflight.sh "t" && ./command.sh "transform"            ;;
-    preflight)              ;;
+    set) ./command.sh $@         ;;
+    get) ./command.sh $@         ;;
+    clone)      ./command.sh $@  ;;
+    transform)  ./command.sh $@  ;;
 esac
+
