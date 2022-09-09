@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 check_init(){
     INIT= $(`yq '.initialized' ../yml/config.yml`)
     if [[ INIT != true ]]; then
