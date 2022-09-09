@@ -11,6 +11,6 @@ case ${1,,} in
     get) ./command.sh $@    ;;
     clone)                  ;;
     pull)                   ;;
-    transform)              ;;
+    transform)  ./preflight.sh "t" && ./command.sh "transform"            ;;
     preflight)              ;;
 esac

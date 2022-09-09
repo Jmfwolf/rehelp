@@ -1,9 +1,10 @@
 #!/bin/bash
 
 case ${1,,} in
-    set) ./command.sh $@    ;;
+    set)     ;;
     get) ./command.sh $@    ;;
 esac
+
 transform() {
     parallel ::: $TRANSFORM ::: ${PATHS[@]}
 }
