@@ -8,7 +8,7 @@ Basic assumptions in the software:
 - `rehelp set $ENV_VAR $VALUETOBESET` will set specified environment variable to the value
 - `rehelp get $ENV_VAR` will return the value that is currently stored in the environment variable
 - `rehelp transform`    performs the transformation action stored, on the files specified in paths.
-- `rehelp pull`         performs a git 
+- `rehelp clone`         performs a git clone of repo set in config.yml
 
 ## Dependencies
 software requirements:
