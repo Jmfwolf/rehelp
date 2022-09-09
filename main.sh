@@ -1,5 +1,13 @@
 #!/bin/bash
-
+##
+##Exit Codes##############
+##Exit
+##
+##
+##
+##
+##
+##
 export SERVICE=""
 export ENVIRONMENT=""
 export CONFIG_PATH=""
