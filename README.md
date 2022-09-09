@@ -28,6 +28,6 @@ Paths configuration is taken by default from this file. It is expected that this
 This file should also include environment information. It is specifically generic to accomodate different environment management techniques.
 
 ## Planned Features
-Automated testing, user provides tests and loads config files for rehelp to execute
-Automated and staggered Pull Requests
-Automated revert of Pull Requests
+- Automated testing, user provides tests and loads config files for rehelp to execute
+- Automated and staggered Pull Requests
+- Automated revert of Pull Requests
