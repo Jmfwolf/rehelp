@@ -5,7 +5,7 @@ Basic assumptions in the software:
 - You have cli access to github
 
 ## Usage
-- `rehelp set $ENV_VAR $VALUETOBESET` will set specified environment variable to the value
+- `rehelp use $ENV_VAR $VALUETOBESET` will set specified environment variable to the value
 - `rehelp get $ENV_VAR` will return the value that is currently stored in the environment variable
 - `rehelp transform`    performs the transformation action stored, on the files specified in paths.
 - `rehelp clone`         performs a git clone of repo set in config.yml
@@ -17,9 +17,10 @@ software requirements:
 - gnu parallel https://www.gnu.org/software/parallel/
 
 ## Quick Start
-1. `rehelp set service $SERVICENAME`
-2. `rehelp set paths   $PATHS`
-3. `rehelp set replace $REPLACEVALUE`
+1. `rehelp use service $SERVICENAME`
+2. `rehelp use paths   $PATHS`
+3. `rehelp use replace $REPLACEVALUE`
+4. `rehelp release`
 
 ## Multi Test Execution
 The Easiest way to execute multiple service release is `rehelper release -all -y`. THIS IS DANGEROUS if you turn turn off consent it will execute all transform file releases. Only do this if you are sure what the transform code execution is.
