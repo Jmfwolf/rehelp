@@ -3,17 +3,16 @@
 case ${1,,} in
     e) check_env        ;;
     f) check_full       ;;
-    i) check_init       ;;
     p) check_paths      ;;
     s) check_service    ;;
     t) check_transform  ;;
 esac
 
 
-check_init(){
-    INIT= $(`yq '.initialized' ../yml/config.yml`)
+check_full(){
+    INIT=$(yq '.initialized' .yml/config.yml)
     if [[ INIT != true ]]; then
-    check_service && check_transform
+       check_service && check_transform && check_env && check_replace && check_transform
     if [[ -z "$(which yq)" ]]; then
         echo "Please use your package manager to install yq\ne.g. brew install yq" >&2
     fi
@@ -24,21 +23,26 @@ check_init(){
 
 check_service(){
     if [[ -z "$SERVICE" ]]; then
-        SERVICE=$(yq '.service' ../yml/transform.yml)
+        SERVICE=$(yq '.service' ../transforms/$TRFILE)
     fi
     if [[ -z "$SERVICE" ]]; then
-        echo "Please set the service\n rehelp set service SERVICENAME" >&2
-        exit 1
+        echo "Please enter a service"
+        read SERVICE
+        ./command.sh use service "$SERVICE"
     fi
 }
 
 
 check_paths(){
     if [[ -z "$CONFIG_PATH" ]]; then
-        CONFIG_PATH=$(yq '.path' ../yml/transform.yml)
+        CONFIG_PATH=$(yq '.path' ../transforms/$TRFILE)
     fi
     if [[ -z "$CONFIG_PATH" ]]; then
-        echo "Please Set the Path to the Configuration repo\n rehelp set path PATH" >&2
+        echo "There is no config file to change. Would you like to clone the repo? y/n"
+        read ans
+        if [[ "${ans,,}" == "y" ]]; then
+            ./command.sh clone
+        fi
         exit 1
     fi
 
@@ -50,7 +54,7 @@ verify_paths(){
 
     for i in "${!PATHS[@]}"; do
         if [[ ! -e "${PATHS[$i]}" ]]; then
-            echo "${PATHS[$i]} was not found. Please check the definitions.yml" >&2
+            echo "${PATHS[$i]} was not found. Please check the $TRFILE" >&2
             unset PATHS[i]
         fi
     done
@@ -58,10 +62,10 @@ verify_paths(){
 
 check_replace(){
     if [[ -z "$REPLACE" ]]; then
-        REPLACE=$(yq '.replacement_term' ../yml/transform.yml)
+        REPLACE=$(yq '.replacement_term' ../transforms/$TRFILE)
     fi
     if [[ -z "$REPLACE" ]]; then
-        echo "Please set the replace value\n rehelp set replace REPLACEVALUE" >&2
+        echo "Please use the replace value\n rehelp use replace REPLACEVALUE" >&2
         exit 1
     fi
 }
@@ -77,16 +81,12 @@ check_transform(){
 }
 
 check_env(){
-    ENV=($(yq '.environments' ../yml/definitions.yml))
+    ENV=($(yq '.environments' ../transforms/definitions.yml))
     if [[ ${#ENV[@]} ]]; then
         RES=$(printf -- '%s\n' "${ENV[@]}" | grep "$ENVIRONMENT")
         if [[ -z "$RES" ]]; then
             echo "$ENVIRONMENT is not included in the definitions provided." >&2
-
-
-}
-
-check_full(){
-    check_init && check_service && check_replace && check_paths
-    check_transform
+            exit 1
+        fi
+    fi
 }

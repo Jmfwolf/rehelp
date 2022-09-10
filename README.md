@@ -22,7 +22,7 @@ software requirements:
 3. `rehelp set replace $REPLACEVALUE`
 
 ## Multi Test Execution
-The Easiest way to execute multiple service release is `rehelper release -all -y`. THIS IS DANGEROUS if you turn turn off consent it will execute all transform file releases
+The Easiest way to execute multiple service release is `rehelper release -all -y`. THIS IS DANGEROUS if you turn turn off consent it will execute all transform file releases. Only do this if you are sure what the transform code execution is.
 ## definitions.yml
 This file maps the service name to the specific config files that are a part of each service.
 Paths configuration is taken by default from this file. It is expected that this file is formatted with each service as an array of paths. [Yaml Arrays](https://www.w3schools.io/file/yaml-arrays/)
