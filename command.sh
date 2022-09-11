@@ -1,7 +1,7 @@
 #!/bin/bash
 transform() {
-    ./preflight "t"
-    parallel ::: $TRANSFORM ::: ${PATHS[@]}
+    ./preflight.sh "t"
+    (cd .clones && echo $TRANSFORM && parallel ::: $TRANSFORM ::: ${PATHS[@]})
 }
 use_transform() {
     TRANSFORM=$1
@@ -12,27 +12,35 @@ get_transform(){
     echo "TRANSFORM: $TRANSFORM"
     exit 0
 }
+
 #Todo: Clone should automatically update the config path
-clone_config(){
+clone_repo(){
     ./preflight.sh "c"
-    local PRE=$(ls)
-    git clone $(yq '.config_repo_url' transform/$TRFILE)
-    local POST=$(ls)
-    ./command.sh use config $(grep -v -F -x -f $PRE $POST)
+    local TEMP=$(yq '.repo_url' transforms/$TRFILE)
+    (cd .clones && git clone $TEMP)
+    ./command.sh use repo ".clones/$(basename "$TEMP")"
     exit 0
 }
-use_config(){
-    CONFIG_PATH=$(echo -e ${1,,} | tr -d '[:space:]')
-    yq -i '.config_path = env(CONFIG_PATH)' transforms/$TRFILE
+
+use_repo(){
+    local REPO_URL=$(echo -e ${1,,} | tr -d '[:space:]')
+    if [[ -z $REPO_URL ]]; then
+        echo "Please use a valid path to the repo"
+        exit 1
+    else
+    yq -i '.repo_url = env(REPO_URL)' transforms/$TRFILE
+    REPO="$(basename $REPO_URL)"
+    fi
+    exit 0
 }
+
 use_service(){
     if [[ -z "$1" ]]; then
             ./preflight.sh "s"
-        echo "SERVICE has been set to the service value in transform" # This updates in the preflight check, probably not the best way
+        echo "SERVICE has been set to the service value in default.yml" # This updates in the preflight check, probably not the best way
     else
         SERVICE=$(echo -e ${1,,} | tr -d '[:space:]')
         yq -i '.service = env(SERVICE)' transforms/$TRFILE
-        echo $_
     fi
     exit 0
 }
@@ -43,13 +51,6 @@ get_service(){
 
 get_paths(){
     echo "PATHS=$PATHS"
-    exit 0
-}
-
-use_paths(){
-    PATHS=("$1")
-    echo "PATHS has been set to $PATHS.\nDefinitions was not altered"
-    ./preflight.sh "p"
     exit 0
 }
 
@@ -66,13 +67,13 @@ use_env(){
 }
 
 if [[ ${#1} -lt 4 ]]; then
-    if [[ "$1" == "use" ]]; then
+    if [[ "${1,,}" == "use" ]]; then
         case ${2,,} in
             service)    use_service     $3  ;;
             transform)  use_transform   $3  ;;
             paths)      use_paths       $3  ;;
             environ)    use_env         $3  ;;
-            config)     use_config      $3  ;;
+            repo)       use_repo        $3  ;;
             *)          echo "$2 is not a recognized command" >&2; exit 2   ;;
         esac
     elif [[ "${1,,}" == "get" ]]; then
@@ -90,9 +91,9 @@ if [[ ${#1} -lt 4 ]]; then
     fi
 fi
 
-case $(echo -e ${1,,} | tr -d '[:space:]') in
+case $(echo "${1,,}" | tr -d '[:space:]') in
     transform)  transform           ;;
-    clone)      clone_config        ;;
+    clone)      clone_repo          ;;
     release)    release $@          ;;
     *)          echo "$1 is not a recognized commmand"; exit 2  ;;
 esac

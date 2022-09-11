@@ -1,7 +1,6 @@
-service: oauth
-environment: null
-config_path:
-  license:
-replacement_term: null
-transform: yq -i '(.images[] | select(. == ".registry/env(SERVICE)").newTag) = "env(REPLACE)"'
-config_repo_url: https://github.com/Jmfwolf/rehelp.git
+service: test
+environment: test
+replacement_term: BOOGIE WOOGIE OOGIE
+transform: yq -i (.service, .environment) = "env(REPLACE)"' env(TRFILE)
+repo_url: https://github.com/Jmfwolf/rehelp
+

@@ -7,6 +7,10 @@ environments:
   - production
 
 services:
+  - service: test
+    environments:
+      - test:
+        - rehelp/transforms/default.yml
   - service: Oauth
     environments:
       - test:
@@ -30,4 +34,4 @@ services:
         - config/path/to/prod/admin.yml
         - config/path/to/prod/admin2.yml
         - config/path/to/prod/admin3.yml
-        - config/path/to/prod/admin4.yml
+        - config/path/to/prod/admin4.yml 
