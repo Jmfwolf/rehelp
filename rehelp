@@ -62,7 +62,7 @@ use_VAR(){
     local VAR_NAME=$(echo -e ${1,,} | tr -d '[:space:]')
     local VAR_VALUE=$(echo -e ${2,,} | tr -d '[:space:]')
     echo "$VAR_NAME and $VAR_VALUE"
-    local TUU=$(echo "$VAR_NAME" | yq '.strenv($1) | key' transforms/$TRFILE)
+    local TUU=$(echo "$VAR_NAME" | yq '.strenv(1) | key' transforms/$TRFILE)
     echo $TUU
     if [[ -z $(yq '.$VAR_NAME | key' transforms/$TRFILE) ]]; then
         echo "$VAR was not found in $TRFILE, would you like to write and set it? y/n"
