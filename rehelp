@@ -1,11 +1,12 @@
 #!/bin/bash
 ##
+## Look up how to do pull requests with git cli
+## Create a way to do naming systems for PRs
+## Create and installation script that looks for dependencies
 ##
-##
-#
-#
 ## config_path is the target document to be changed
 ## changes are defined by the yamls provided
+#
 #
 #
 #
