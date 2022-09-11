@@ -18,7 +18,7 @@ clone_repo(){
     ./preflight.sh "c"
     local TEMP=$(yq '.repo_url' transforms/$TRFILE)
     (cd .clones && git clone $TEMP)
-    ./command.sh use repo ".clones/$(basename "$TEMP")"
+    REPO="$(basename $TEMP)"
     exit 0
 }
 
@@ -41,6 +41,7 @@ use_service(){
     else
         SERVICE=$(echo -e ${1,,} | tr -d '[:space:]')
         yq -i '.service = env(SERVICE)' transforms/$TRFILE
+        echo "SERVICE has been set to $SERVICE"
     fi
     exit 0
 }
@@ -50,12 +51,12 @@ get_service(){
 }
 
 get_paths(){
-    echo "PATHS=$PATHS"
+    echo "PATHS: $PATHS"
     exit 0
 }
 
 get_env(){
-    echo "ENVIRONMENT: $ENVIRONMENT"
+    echo "ENVIRONMENT: $(yq '.environment' transforms/$TRFILE)"
     exit 0
 }
 

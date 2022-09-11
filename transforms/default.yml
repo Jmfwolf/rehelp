@@ -1,6 +1,5 @@
-service: test
-environment: test
+service: godmode
+environment: babyboy
 replacement_term: BOOGIE WOOGIE OOGIE
 transform: yq -i (.service, .environment) = "env(REPLACE)"' env(TRFILE)
 repo_url: https://github.com/Jmfwolf/rehelp
-
