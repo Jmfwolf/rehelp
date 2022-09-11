@@ -1,19 +1,13 @@
 #!/bin/bash
 transform() {
     ./preflight.sh "t"
+    local ENVIRONMENT=$(get_var "environment")
+    local TRANSFORM=$(get_var "transform")
+    git checkout $ENVIRONMENT
+    git checkout -b 
     (cd .clones && echo $TRANSFORM && parallel ::: $TRANSFORM ::: ${PATHS[@]})
 }
-use_transform() {
-    TRANSFORM=$1
-    yq -i '.transform = "$TRANSFORM"' transforms/$TRFILE
-    echo "TRANSFORM has been set to $TRANSFORM"
-}
-get_transform(){
-    echo "TRANSFORM: $TRANSFORM"
-    exit 0
-}
 
-#Todo: Clone should automatically update the config path
 clone_repo(){
     ./preflight.sh "c"
     local TEMP=$(yq '.repo_url' transforms/$TRFILE)
@@ -22,48 +16,24 @@ clone_repo(){
     exit 0
 }
 
-use_repo(){
-    local REPO_URL=$(echo -e ${1,,} | tr -d '[:space:]')
-    if [[ -z $REPO_URL ]]; then
-        echo "Please use a valid path to the repo"
-        exit 1
-    else
-    yq -i '.repo_url = env(REPO_URL)' transforms/$TRFILE
-    REPO="$(basename $REPO_URL)"
+use_VAR(){
+    local VAR_NAME=$(echo -e ${1,,} | tr -d '[:space:]')
+    local VAR_VALUE=$(echo -e ${2,,} | tr -d '[:space:]')
+    if [[ -z $(yq '.env(VAR_NAME)' transforms/$TRFILE) ]]; then
+        echo "$VAR was not found in $TRFILE, would you like to write and set it? y/n"
+        read -n 1 ANS
+        if [[ ! "${ANS,,}" == "y"]]; then
+            echo "$VAR_NAME not set exit"
+            exit 1
+        fi
     fi
+    yq -i '.env(VAR) = env(VAR)' transforms/$TRFILE
+    echo "$VAR_NAME has been set to $VAR_VALUE"
     exit 0
 }
-
-use_service(){
-    if [[ -z "$1" ]]; then
-            ./preflight.sh "s"
-        echo "SERVICE has been set to the service value in default.yml" # This updates in the preflight check, probably not the best way
-    else
-        SERVICE=$(echo -e ${1,,} | tr -d '[:space:]')
-        yq -i '.service = env(SERVICE)' transforms/$TRFILE
-        echo "SERVICE has been set to $SERVICE"
-    fi
-    exit 0
-}
-get_service(){
-    echo "SERVICE: $(yq '.service' transforms/$TRFILE)"
-    exit 0
-}
-
-get_paths(){
-    echo "PATHS: $PATHS"
-    exit 0
-}
-
-get_env(){
-    echo "ENVIRONMENT: $(yq '.environment' transforms/$TRFILE)"
-    exit 0
-}
-
-use_env(){
-    ENVIRONMENT=$(echo -e ${1,,} | tr -d '[:space:]')
-    yq -i '.environment = env(ENVIRONMENT)' transforms/$TRFILE
-    echo "ENVIRONMENT has been set to $ENVIRONMENT"
+get_VAR(){
+    local VAR=$(echo -e ${1,,} | tr -d '[:space:]')
+    echo "$VAR: $(yq '.env(VAR)' transforms/$TRFILE)"
     exit 0
 }
 

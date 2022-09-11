@@ -15,12 +15,8 @@ if [[ $(id -u) -eq 0 ]]; then
     exit 4
 fi
 export TRFILE="default.yml"
-export SERVICE=""
-export ENVIRONMENT=""
 export REPO=""
 export PATHS=()
-export REPLACE=""
-export TRANSFORM=""
 
 __HELP="
 rehelp is the release helper you didn't ask for. Automating changes to files through definitions is not limited to pull requests.
@@ -43,13 +39,58 @@ Usage rehelp [ clone | release | release --all | transform | use <VAR_NAME> <NEW
         - replace: string       if the transform includes replacing text those can be stored and referenced
 "
 
+transform() {
+    ./preflight.sh "t"
+    local ENVIRONMENT=$(get_var "environment")
+    local TRANSFORM=$(get_var "transform")
+    (./preflight.sh "t"  "$TRANSFORM") &
+    (./preflight.sh "e"  "$ENVIRONMENT") &
+    git checkout $ENVIRONMENT
+    git checkout -b 
+    (cd .clones && echo $TRANSFORM && parallel ::: $TRANSFORM ::: ${PATHS[@]})
+}
 
+clone_repo(){
+    local URL=$(yq '.repo_url' transforms/$TRFILE)
+        ./preflight.sh "c" "$URL"
+    (cd .clones && git clone $URL)
+    REPO="$(basename $URL)"
+    exit 0
+}
+
+use_VAR(){
+    local VAR_NAME=$(echo -e ${1,,} | tr -d '[:space:]')
+    local VAR_VALUE=$(echo -e ${2,,} | tr -d '[:space:]')
+    echo "$VAR_NAME and $VAR_VALUE"
+    local TUU=$(echo "$VAR_NAME" | yq '.strenv($1) | key' transforms/$TRFILE)
+    echo $TUU
+    if [[ -z $(yq '.$VAR_NAME | key' transforms/$TRFILE) ]]; then
+        echo "$VAR was not found in $TRFILE, would you like to write and set it? y/n"
+        read -n 2 ANS
+        if [[ ! "${ANS,,}" == "y" ]]; then
+            echo "$VAR_NAME not set exit"
+            exit 1
+        fi
+    fi
+    yq -i '.$VAR_NAME = $VAR_VALUE' transforms/$TRFILE
+    echo "$VAR_NAME has been set to $VAR_VALUE"
+    exit 0
+}
+get_VAR(){
+    #echo $TRFILE
+    local VAR="${1,,}"
+    local VAL
+    echo "$(yq '.$VAR as $VAL | $VAL' transforms/$TRFILE)"
+    #local VAL=$(yq '.$VAR' transforms/$TRFILE || echo "ERROR: $VAR is var $VAL is val")
+    #echo "$VAR: $VAL"
+    exit 0
+}
 
 case $(echo "${1,,}" | tr -d '[:space:]') in
-    use)        ./command.sh $@  ;;
-    get)        ./command.sh $@  ;;
-    clone)      ./command.sh $@  ;;
-    transform)  ./command.sh $@  ;;
+    use)        use_VAR $2 $3    ;;
+    get)        get_VAR $2       ;;
+    clone)      clone_repo       ;;
+    transform)  transform        ;;
     help)       echo "$__HELP"   ;;
     --help)     echo "$__HELP"   ;;
     -h)         echo "$__HELP"   ;;  
