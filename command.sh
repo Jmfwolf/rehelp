@@ -1,7 +1,10 @@
 #!/bin/bash
 transform() {
     ./preflight.sh "t"
-    (cd .clones && echo $TRANSFORM && parallel ::: $TRANSFORM ::: ${PATHS[@]})
+    cd .clones/$REPO && git checkout $ENVIRONMENT 
+    git checkout -b "$PREFIX-$SERVICE"
+    parallel ::: $TRANSFORM ::: ${PATHS[@]}
+    echo "tranformation complete"
 }
 use_transform() {
     TRANSFORM=$1
@@ -66,7 +69,14 @@ use_env(){
     echo "ENVIRONMENT has been set to $ENVIRONMENT"
     exit 0
 }
+release()
+{
+    case ${2,,} in
+        --all)       FILLER      ;;
+        --full)      clone && transform     ;;
+    esac
 
+}
 if [[ ${#1} -lt 4 ]]; then
     if [[ "${1,,}" == "use" ]]; then
         case ${2,,} in

@@ -1,5 +1,10 @@
-service: godmode
-environment: babyboy
-replacement_term: BOOGIE WOOGIE OOGIE
-transform: yq -i (.service, .environment) = "env(REPLACE)"' env(TRFILE)
-repo_url: https://github.com/Jmfwolf/rehelp
+#List of example services and environments
+oauth:
+  brancha:
+    - folder/file1.yml
+  branchb:
+    - folder/file2.yml
+noauth:
+  brancha:
+    - nofolder/file1.yml
+    - nofolder/file2.yml
