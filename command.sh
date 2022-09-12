@@ -2,9 +2,7 @@
 transform() {
     ./preflight.sh "t"
     ./preflight.sh "e"
-    if [[ ! -d .clones/$REPO ]]; then
-        ./command.sh clone
-    fi
+    (./command.sh clone) || echo "no clone "
     PREFIX="$( yq '.release_prefix' transforms/$TRFILE )$SERVICE"
     cd .clones/$REPO
     git checkout $ENVIRONMENT && echo "$ENVIRONMENT branch of $REPO"

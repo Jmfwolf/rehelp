@@ -1,6 +1,6 @@
 service: challenge
 environment: test
 replacement_term: BOOGIE WOOGIE OOGIE
-transform: mv $0 ${0}bum
-repo_url: https://github.com/Jmfwolf/mentor_challenges
-release_prefix: MM-YY-$SERVICE
+transform: yq -i '(.new, .value) = "$REPLACE"'
+repo_url: https://github.com/Jmfwolf/example
+release_prefix: SEP-22
