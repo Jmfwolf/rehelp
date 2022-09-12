@@ -46,13 +46,15 @@ Usage rehelp [ clone | release | release --all | transform | use <VAR_NAME> <NEW
 
 
 case $(echo "${1,,}" | tr -d '[:space:]') in
-    use)        ./command.sh $@  ;;
-    get)        ./command.sh $@  ;;
-    clone)      ./command.sh $@  ;;
-    transform)  ./command.sh $@  ;;
-    help)       echo "$__HELP"   ;;
-    --help)     echo "$__HELP"   ;;
-    -h)         echo "$__HELP"   ;;  
+    -t)         TRFILE=$2;  shift 2;    release $@  ;;
+    use)        ./command.sh    $@                  ;;
+    get)        ./command.sh    $@                  ;;
+    clone)      ./command.sh    $@                  ;;
+    transform)  ./command.sh    $@                  ;;
+    release)    ./command.sh    $@                  ;;
+    help)       echo "$__HELP"                      ;;
+    --help)     echo "$__HELP"                      ;;
+    -h)         echo "$__HELP"                      ;; 
     *)      echo -e "\n$1 is not a recognized command try \"rehelp -h\"" >&2
 esac
 
