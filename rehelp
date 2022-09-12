@@ -42,11 +42,17 @@ Usage rehelp [ clone | release | release --all | transform | use <VAR_NAME> <NEW
         - transform: string     the instruction(s) for how the files will be modified
         - replace: string       if the transform includes replacing text those can be stored and referenced
 "
-
+tfile_assign(){
+    if [[ -d transforms/$1 || $(echo "${1,,}" | tr -d '[:space:]') == "default.yaml"]]; then
+        exit 5
+    else
+        TRFILE=$(echo "${1,,}" | tr -d '[:space:]')
+    fi
+}
 
 
 case $(echo "${1,,}" | tr -d '[:space:]') in
-    -t)         TRFILE=$2;  shift 2;    release $@  ;;
+    -t)         tfile_assign    $2;  shift 2;    release $@  ;;
     use)        ./command.sh    $@                  ;;
     get)        ./command.sh    $@                  ;;
     clone)      ./command.sh    $@                  ;;

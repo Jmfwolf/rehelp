@@ -74,8 +74,14 @@ use_env(){
     echo "ENVIRONMENT has been set to $ENVIRONMENT"
     exit 0
 }
-
+release_all(){
+    LIST=(ls)
+}
 release(){
+    case ${2,,} in
+        --all)       FILLER                 ;;
+        --full)      clone && transform     ;;
+    esac
     echo -e "Enter a commit message:\n"
     read MESS
     git commit -a -m $MESS && git push $REPO_URL "$PREFIX-$SERVICE"
@@ -93,7 +99,7 @@ if [[ "${1,,}" == "use" ]]; then
         service)    use_service     $3  ;;
         transform)  use_transform   $3  ;;
         paths)      use_paths       $3  ;;
-        environ)    use_env         $3  ;;
+        env*)       use_env         $3  ;;
         repo)       use_repo        $3  ;;
         *)          echo "$2 is not a recognized command" >&2; exit 2   ;;
     esac
@@ -103,7 +109,7 @@ elif [[ "${1,,}" == "get" ]]; then
         transform)  get_transform   ;;
         paths)      get_paths       ;;
         environ)    get_env         ;;
-        config)     get_config      ;;
+        config)     get_repo        ;;
         *)          echo "$2 is not a recognized command" >&2; exit 2   ;;
     esac
 else
