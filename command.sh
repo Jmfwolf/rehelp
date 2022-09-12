@@ -78,7 +78,8 @@ use_env(){
 release(){
     echo -e "Enter a commit message:\n"
     read MESS
-    git commit -a -m '$MESS'
+    git commit -a -m $MESS && git push $REPO_URL "$PREFIX-$SERVICE"
+    git request-pull $ENVIRONMENT $REPO_URL
 }
 
 case "${1,,}" in
