@@ -1,20 +1,18 @@
 #!/bin/bash
 transform() {
     ./preflight.sh "t"
-    ./preflight.sh "e"
-    (./command.sh clone) || echo "no clone "
-    PREFIX="$( yq '.release_prefix' transforms/$TRFILE )$SERVICE"
-    cd .clones/$REPO
-    git checkout $ENVIRONMENT && echo "$ENVIRONMENT branch of $REPO"
-    git checkout -b $PREFIX
-    #echo ".clones/${PATHS[@]}"
+    cd .clones/$REPO && git checkout $ENVIRONMENT 
+    git checkout -b "$PREFIX-$SERVICE"
     parallel ::: $TRANSFORM ::: ${PATHS[@]}
+    echo "tranformation complete"
 }
+
 use_transform() {
     TRANSFORM=$1
     yq -i '.transform = env(TRANSFORM)' transforms/$TRFILE
     echo "TRANSFORM has been set to $TRANSFORM"
 }
+
 get_transform(){
     echo "TRANSFORM: $TRANSFORM"
     exit 0
@@ -54,6 +52,7 @@ use_service(){
     fi
     exit 0
 }
+
 get_service(){
     echo "SERVICE: $(yq '.service' transforms/$TRFILE)"
     exit 0
@@ -88,7 +87,6 @@ case "${1,,}" in
     release)    release             ;;
 esac
 
-
 if [[ "${1,,}" == "use" ]]; then
     case ${2,,} in
         service)    use_service     $3  ;;
@@ -111,5 +109,3 @@ else
     echo "$1 is not a recognized command"
     exit 2
 fi
-
-

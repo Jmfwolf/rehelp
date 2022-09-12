@@ -1,5 +1,4 @@
 #!/bin/bash
-
 check_service(){
 
     if [[ -z "$SERVICE" ]]; then
@@ -16,10 +15,9 @@ check_service(){
     exit 0
 }
 
-
 check_paths(){
     if [[ ! ${#PATHS} ]]; then
-        PATHS=($(yq '.services.env(SERVICE).env(ENVIRONMENT).[] .clones/env(REPO)'))
+        PATHS=($(yq '.services.[env(SERVICE)].[env(ENVIRONMENT)].[] .clones/env(REPO)'))
     fi
     if [[ ! ${#PATHS} ]]; then
         echo "Path error: You may want to check if the repo url is valid or the definitions provided are correct." >&2
@@ -27,9 +25,7 @@ check_paths(){
 }
 
 verify_paths(){
-
     check_paths
-
     for i in "${!PATHS[@]}"; do
         if [[ ! -e "${PATHS[$i]}" ]]; then
             echo "${PATHS[$i]} was not found. Please check the $TRFILE" >&2
@@ -68,8 +64,8 @@ check_env(){
         fi
     fi
 }
-check_url()
-{
+
+check_url(){
     local URL=$(yq '.repo_url' transforms/$TRFILE)
     local REG='(https?|ftp|file)://[-[:alnum:]\+&@#/%?=~_|!:,.;]*[-[:alnum:]\+&@#/%=~_|]'
     if [[ ! $URL =~ $REG ]]; then
@@ -88,6 +84,7 @@ check_clone(){
     fi
     exit 0
 }
+
 case ${1,,} in
     c) check_clone      ;;
     e) check_env        ;;
