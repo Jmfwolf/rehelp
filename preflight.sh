@@ -14,7 +14,7 @@ check_service(){
 
 check_paths(){
     if [[ ! ${#PATHS} ]]; then
-        PATHS=($(yq '.services.env(SERVICE).env(ENVIRONMENT).[] .clones/env(REPO)'))
+        PATHS=($(yq '.services.[env(SERVICE)].[env(ENVIRONMENT)].[] .clones/env(REPO)'))
     fi
     if [[ ! ${#PATHS} ]]; then
         echo "Path error: You may want to check if the repo url is valid or the definitions provided are correct." >&2

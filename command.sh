@@ -6,17 +6,18 @@ transform() {
     parallel ::: $TRANSFORM ::: ${PATHS[@]}
     echo "tranformation complete"
 }
+
 use_transform() {
     TRANSFORM=$1
     yq -i '.transform = "$TRANSFORM"' transforms/$TRFILE
     echo "TRANSFORM has been set to $TRANSFORM"
 }
+
 get_transform(){
     echo "TRANSFORM: $TRANSFORM"
     exit 0
 }
 
-#Todo: Clone should automatically update the config path
 clone_repo(){
     ./preflight.sh "c"
     local TEMP=$(yq '.repo_url' transforms/$TRFILE)
@@ -48,6 +49,7 @@ use_service(){
     fi
     exit 0
 }
+
 get_service(){
     echo "SERVICE: $(yq '.service' transforms/$TRFILE)"
     exit 0
@@ -69,14 +71,15 @@ use_env(){
     echo "ENVIRONMENT has been set to $ENVIRONMENT"
     exit 0
 }
-release()
-{
+
+release(){
     case ${2,,} in
         --all)       FILLER      ;;
         --full)      clone && transform     ;;
     esac
 
 }
+
 if [[ ${#1} -lt 4 ]]; then
     if [[ "${1,,}" == "use" ]]; then
         case ${2,,} in
