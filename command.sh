@@ -75,7 +75,9 @@ use_env(){
     exit 0
 }
 release_all(){
-    LIST=(ls)
+    LIST=($(ls transforms/))
+    # parallel feed rehelp -t "${LIST[@]}" release
+    # then continue to release for default.yml 
 }
 release(){
     case ${2,,} in

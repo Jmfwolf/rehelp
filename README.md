@@ -7,22 +7,15 @@ Basic assumptions in the software:
 ## Usage
 - `rehelp use $ENV_VAR $VALUETOBESET` will set specified environment variable to the value
 - `rehelp get $ENV_VAR` will return the value that is currently stored in the environment variable
-- `rehelp transform`    performs the transformation action stored, on the files specified in paths.
+- `rehelp transform`    performs the git checkout, git checkout -b $PRE_FIX-$SERVICE, transformation on the files specified in paths.
 - `rehelp clone`        performs a git clone of repo set in config.yml
-- `rehelp release`      
+- `rehelp release`      perform git commit -a -m '\[message you are prompted for\]'
 
 ## Dependencies
 software requirements:
 - bash
 - yq https://github.com/mikefarah/yq
 - gnu parallel https://www.gnu.org/software/parallel/
-
-## Quick Start
-1. `rehelp use service $SERVICENAME`
-2. `rehelp use paths   $PATHS`
-3. `rehelp use replace $REPLACEVALUE`
-4. `rehelp use repo    $PATH_TO_REPO`
-5. `rehelp release`
 
 ## Multi Test Execution
 The Easiest way to execute multiple service release is `rehelper release -all`. THIS IS DANGEROUS. This will look in the tranforms folder and perform all transformations that have been listed without checks. This assumes you have made sure each of the required items have been filled out on each yaml file.
