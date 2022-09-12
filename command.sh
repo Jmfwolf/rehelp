@@ -4,6 +4,9 @@ transform() {
     cd .clones/$REPO && git checkout $ENVIRONMENT 
     git checkout -b "$PREFIX-$SERVICE"
     parallel ::: $TRANSFORM ::: ${PATHS[@]}
+    echo -e "Enter a commit message:\n"
+    read MESS
+    git commit -a -m $MESS 
     echo "tranformation complete"
 }
 
@@ -72,6 +75,7 @@ use_env(){
     exit 0
 }
 
+<<<<<<< Updated upstream
 release(){
     case ${2,,} in
         --all)       FILLER      ;;
@@ -110,4 +114,30 @@ case $(echo "${1,,}" | tr -d '[:space:]') in
     clone)      clone_repo          ;;
     release)    release $@          ;;
     *)          echo "$1 is not a recognized commmand"; exit 2  ;;
+=======
+release_all(){
+    LIST=($(ls transforms/))
+    release &
+    parallel ::: ./rehelp -t ::: ${LIST[@]} ::: "release --full"
+}
+
+release(){
+    case ${2,,} in
+        --all)       release_all            ;;
+        --full)      clone && transform     ;;
+    esac
+    git push $REPO_URL "$PREFIX-$SERVICE"
+    git request-pull $ENVIRONMENT $REPO_URL
+}
+
+clean(){
+    rm -rf .clones/*
+}
+
+case "${1,,}" in
+    transform)  transform           ;;
+    clone)      clone_repo          ;;
+    clean)      clean               ;;
+    release)    release             ;;
+>>>>>>> Stashed changes
 esac
