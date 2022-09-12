@@ -1,5 +1,6 @@
-service: godmode
-environment: babyboy
+service: challenge
+environment: test
 replacement_term: BOOGIE WOOGIE OOGIE
-transform: yq -i (.service, .environment) = "env(REPLACE)"' env(TRFILE)
-repo_url: https://github.com/Jmfwolf/rehelp
+transform: mv $0 ${0}bum
+repo_url: https://github.com/Jmfwolf/mentor_challenges
+release_prefix: MM-YY-$SERVICE

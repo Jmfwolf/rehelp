@@ -1,11 +1,20 @@
 #!/bin/bash
 transform() {
     ./preflight.sh "t"
-    (cd .clones && echo $TRANSFORM && parallel ::: $TRANSFORM ::: ${PATHS[@]})
+    ./preflight.sh "e"
+    if [[ ! -d .clones/$REPO ]]; then
+        ./command.sh clone
+    fi
+    PREFIX="$( yq '.release_prefix' transforms/$TRFILE )$SERVICE"
+    cd .clones/$REPO
+    git checkout $ENVIRONMENT && echo "$ENVIRONMENT branch of $REPO"
+    git checkout -b $PREFIX
+    #echo ".clones/${PATHS[@]}"
+    parallel ::: $TRANSFORM ::: ${PATHS[@]}
 }
 use_transform() {
     TRANSFORM=$1
-    yq -i '.transform = "$TRANSFORM"' transforms/$TRFILE
+    yq -i '.transform = env(TRANSFORM)' transforms/$TRFILE
     echo "TRANSFORM has been set to $TRANSFORM"
 }
 get_transform(){
@@ -15,7 +24,9 @@ get_transform(){
 
 #Todo: Clone should automatically update the config path
 clone_repo(){
-    ./preflight.sh "c"
+    if [[ $(./preflight.sh "c") ]]; then
+        exit 0
+    fi
     local TEMP=$(yq '.repo_url' transforms/$TRFILE)
     (cd .clones && git clone $TEMP)
     REPO="$(basename $TEMP)"
@@ -67,34 +78,40 @@ use_env(){
     exit 0
 }
 
-if [[ ${#1} -lt 4 ]]; then
-    if [[ "${1,,}" == "use" ]]; then
-        case ${2,,} in
-            service)    use_service     $3  ;;
-            transform)  use_transform   $3  ;;
-            paths)      use_paths       $3  ;;
-            environ)    use_env         $3  ;;
-            repo)       use_repo        $3  ;;
-            *)          echo "$2 is not a recognized command" >&2; exit 2   ;;
-        esac
-    elif [[ "${1,,}" == "get" ]]; then
-        case ${2,,} in
-            service)    get_service     ;;
-            transform)  get_transform   ;;
-            paths)      get_paths       ;;
-            environ)    get_env         ;;
-            config)     get_config      ;;
-            *)          echo "$2 is not a recognized command" >&2; exit 2   ;;
-        esac
-    else
-        echo "$1 is not a recognized command"
-        exit 2
-    fi
-fi
+release(){
+    echo -e "Enter a commit message:\n"
+    read MESS
+    git commit -a -m '$MESS'
+}
 
-case $(echo "${1,,}" | tr -d '[:space:]') in
+case "${1,,}" in
     transform)  transform           ;;
     clone)      clone_repo          ;;
-    release)    release $@          ;;
-    *)          echo "$1 is not a recognized commmand"; exit 2  ;;
+    release)    release             ;;
 esac
+
+
+if [[ "${1,,}" == "use" ]]; then
+    case ${2,,} in
+        service)    use_service     $3  ;;
+        transform)  use_transform   $3  ;;
+        paths)      use_paths       $3  ;;
+        environ)    use_env         $3  ;;
+        repo)       use_repo        $3  ;;
+        *)          echo "$2 is not a recognized command" >&2; exit 2   ;;
+    esac
+elif [[ "${1,,}" == "get" ]]; then
+    case ${2,,} in
+        service)    get_service     ;;
+        transform)  get_transform   ;;
+        paths)      get_paths       ;;
+        environ)    get_env         ;;
+        config)     get_config      ;;
+        *)          echo "$2 is not a recognized command" >&2; exit 2   ;;
+    esac
+else
+    echo "$1 is not a recognized command"
+    exit 2
+fi
+
+

@@ -15,12 +15,12 @@ if [[ $(id -u) -eq 0 ]]; then
     exit 4
 fi
 export TRFILE="default.yml"
-export SERVICE=""
-export ENVIRONMENT=""
-export REPO=""
-export PATHS=()
-export REPLACE=""
-export TRANSFORM=""
+export SERVICE=$(yq '.service' transforms/$TRFILE)
+export ENVIRONMENT=$(yq '.environment' transforms/$TRFILE)
+export REPO="$(basename "$(yq '.repo_url' transforms/default.yml)")"
+export PATHS=($( yq '.[env(SERVICE)].[env(ENVIRONMENT)].[]' config/definitions.yml )) 
+export REPLACE=$(yq '.replacement_term' transforms/$TRFILE)
+export TRANSFORM=$(yq '.transform' transforms/$TRFILE)
 
 __HELP="
 rehelp is the release helper you didn't ask for. Automating changes to files through definitions is not limited to pull requests.
