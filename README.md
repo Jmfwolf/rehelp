@@ -14,8 +14,8 @@ Basic assumptions in the software:
 ## Dependencies
 software requirements:
 - bash
-- yq https://github.com/mikefarah/yq
-- gnu parallel https://www.gnu.org/software/parallel/
+- yq <https://github.com/mikefarah/yq>
+- gnu parallel <https://www.gnu.org/software/parallel/>
 
 ## Multi Test Execution
 The Easiest way to execute multiple service release is `rehelper release -all`. THIS IS DANGEROUS. This will look in the tranforms folder and perform all transformations that have been listed without checks. This assumes you have made sure each of the required items have been filled out on each yaml file.
@@ -32,4 +32,4 @@ This file should also include environment information. It is specifically generi
 ## Planned Features
 - Automated testing, user provides tests and loads config files for rehelp to execute
 - Automated and staggered Pull Requests
-- Automated revert of Pull Requests
+- Automated revert of Pull Requests␊

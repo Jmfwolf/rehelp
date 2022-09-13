@@ -3,7 +3,7 @@ transform() {
     ./preflight.sh "t"
     cd .clones/$REPO && git checkout $ENVIRONMENT 
     git checkout -b "$PREFIX-$SERVICE"
-    parallel ::: $TRANSFORM ::: ${PATHS[@]}
+    parallel ::: $TRANSFORM ::: "${PATHS[@]}"
     echo "tranformation complete"
 }
 
@@ -23,7 +23,7 @@ clone_repo(){
     if [[ $(./preflight.sh "c") ]]; then
         exit 0
     fi
-    local TEMP=$(yq '.repo_url' transforms/$TRFILE)
+    local TEMP="$(yq '.repo_url' transforms/$TRFILE)"
     (cd .clones && git clone $TEMP)
     REPO="$(basename $TEMP)"
     exit 0
@@ -85,7 +85,7 @@ release(){
         --full)      clone && transform     ;;
     esac
     echo -e "Enter a commit message:\n"
-    read MESS
+    read -r MESS
     git commit -a -m $MESS && git push $REPO_URL "$PREFIX-$SERVICE"
     git request-pull $ENVIRONMENT $REPO_URL
 }
@@ -93,7 +93,7 @@ release(){
 case "${1,,}" in
     transform)  transform           ;;
     clone)      clone_repo          ;;
-    release)    release             ;;
+    release)    release     $@      ;;
 esac
 
 if [[ "${1,,}" == "use" ]]; then
